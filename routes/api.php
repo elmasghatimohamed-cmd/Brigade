@@ -3,6 +3,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PlatController;
+use App\Http\Controllers\CategoryController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -12,7 +13,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
 });
 
-use App\Http\Controllers\CategoryController;
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/plats', [PlatController::class, 'store']);
+    Route::get('/plats', [PlatController::class, 'index']);
+    Route::get('/plats/{id}', [PlatController::class, 'show']);
+    Route::put('/plats/{id}', [PlatController::class, 'update']);
+    Route::delete('/plats/{id}', [PlatController::class, 'destroy']);
+});
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/categories', [CategoryController::class, 'store']);
