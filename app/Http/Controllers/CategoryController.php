@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Plat;
 use Illuminate\Http\Request;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class CategoryController extends Controller
 {
     // Créer une catégorie
     public function store(Request $request)
     {
+        $this->authorize('create', Category::class);
+        
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
         ]);
@@ -38,6 +41,7 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
+        $this->authorize('update', $category);
 
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $id,
@@ -52,6 +56,8 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
+        $this->authorize('delete', $category);
+        
         $category->delete();
 
         return response()->json(['message' => 'Catégorie supprimée']);
@@ -61,6 +67,7 @@ class CategoryController extends Controller
     public function addPlats(Request $request, $id)
     {
         $category = Category::findOrFail($id);
+        $this->authorize('update', $category);
 
         $request->validate([
             'plats' => 'required|array',

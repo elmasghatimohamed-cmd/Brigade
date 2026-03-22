@@ -9,15 +9,9 @@ return new class extends Migration {
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->string('color', 7)->default('#000000');
+            $table->boolean('is_active')->default(true);
             $table->string('name')->unique();
-            $table->timestamps();
-        });
-
-        // Table pivot pour plats-catégories
-        Schema::create('category_plat', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->foreignId('plat_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
