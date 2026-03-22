@@ -10,9 +10,8 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', [AuthController::class, 'user']);
+    Route::get('/me', [AuthController::class, 'user']);
 });
-
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/plats', [PlatController::class, 'store']);
