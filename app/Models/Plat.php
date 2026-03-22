@@ -9,11 +9,26 @@ class Plat extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'price', 'image'];
+    protected $fillable = ['name', 'description', 'price', 'image', 'is_available', 'category_id'];
+
+    protected $casts = [
+        'price' => 'decimal:2',
+        'is_available' => 'boolean',
+    ];
 
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'category_plat');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function ingredients()
+    {
+        return $this->belongsToMany(Ingredient::class, 'plat_ingredient');
     }
 
     public function getImageUrlAttribute()
