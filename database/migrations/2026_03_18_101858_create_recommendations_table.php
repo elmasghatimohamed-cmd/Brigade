@@ -13,10 +13,10 @@ return new class extends Migration {
         Schema::create('recommendations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')
-                ->constrained('user')
+                ->constrained('users')
                 ->onDelete('cascade');
             $table->foreignId('plat_id')
-                ->constrained('plat')
+                ->constrained('plats')
                 ->onDelete('cascade');
             $table->integer('score');
             $table->text('warning_message');
