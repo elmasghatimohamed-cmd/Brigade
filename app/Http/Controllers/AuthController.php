@@ -16,14 +16,16 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
             'dietary_tags' => 'array|nullable',
-            'dietary_tags.*' => 'in:vegan,no_sugar,no_cholesterol,gluten_free,no_lactose'
+            'dietary_tags.*' => 'in:vegan,no_sugar,no_cholesterol,gluten_free,no_lactose',
+            'role' => 'in:user,admin_restaurant|nullable'
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'dietary_tags' => $request->dietary_tags ?? []
+            'dietary_tags' => $request->dietary_tags ?? [],
+            'role' => $request->role ?? 'user'
         ]);
 
         $token = $user->createToken('api-token')->plainTextToken;
