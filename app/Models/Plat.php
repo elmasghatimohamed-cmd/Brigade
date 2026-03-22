@@ -28,7 +28,7 @@ class Plat extends Model
 
     public function ingredients()
     {
-        return $this->belongsToMany(Ingredient::class, 'plat_ingredient');
+        return $this->belongsToMany(Ingredient::class);
     }
 
     public function getImageUrlAttribute()

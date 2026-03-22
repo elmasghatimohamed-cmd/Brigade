@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('plate_ingredient', function (Blueprint $table) {
+        Schema::create('ingredient_plat', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('plate_id')
-                ->constrained('plats')
-                ->onDelete('cascade');
             $table->foreignId('ingredient_id')
                 ->constrained('ingredients')
+                ->onDelete('cascade');
+            $table->foreignId('plat_id')
+                ->constrained('plats')
                 ->onDelete('cascade');
             $table->timestamps();
         });
@@ -21,6 +21,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('plate_ingredient');
+        Schema::dropIfExists('ingredient_plat');
     }
 };
