@@ -5,35 +5,38 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Plat;
 use Illuminate\Http\Request;
-use Illuminate\Auth\Access\AuthorizationException;
 
 class CategoryController extends Controller
 {
-    // Créer une catégorie
+
     public function store(Request $request)
     {
-        $this->authorize('create', Category::class);
-        
         $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name',
+            'name' => 'required|string|max:100|unique:categories,name',
+            'description' => 'nullable|string',
+            'color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'is_active' => 'boolean'
         ]);
 
-        $category = Category::create(['name' => $request->name]);
+        $category = Category::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'color' => $request->color ?? '#000000',
+            'is_active' => $request->is_active ?? true
+        ]);
 
         return response()->json($category, 201);
     }
 
-    // Lister toutes les catégories
     public function index()
     {
-        $categories = Category::with('plats')->get();
+        $categories = Category::where('is_active', true)->get();
         return response()->json($categories);
     }
 
-    // Afficher une catégorie spécifique
     public function show($id)
     {
-        $category = Category::with('plats')->findOrFail($id);
+        $category = Category::findOrFail($id);
         return response()->json($category);
     }
 
@@ -41,13 +44,20 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
-        $this->authorize('update', $category);
 
         $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $id,
+            'name' => 'required|string|max:100|unique:categories,name,' . $id,
+            'description' => 'nullable|string',
+            'color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
+            'is_active' => 'boolean'
         ]);
 
-        $category->update(['name' => $request->name]);
+        $category->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'color' => $request->color ?? $category->color,
+            'is_active' => $request->is_active ?? $category->is_active
+        ]);
 
         return response()->json($category);
     }
@@ -56,8 +66,7 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
-        $this->authorize('delete', $category);
-        
+
         $category->delete();
 
         return response()->json(['message' => 'Catégorie supprimée']);
@@ -67,7 +76,6 @@ class CategoryController extends Controller
     public function addPlats(Request $request, $id)
     {
         $category = Category::findOrFail($id);
-        $this->authorize('update', $category);
 
         $request->validate([
             'plats' => 'required|array',
@@ -77,5 +85,20 @@ class CategoryController extends Controller
         $category->plats()->syncWithoutDetaching($request->plats);
 
         return response()->json($category->plats);
+    }
+
+    public function getPlats($id)
+    {
+        $category = Category::findOrFail($id);
+
+        try {
+            $plats = $category->plats()->where('is_available', true)->get();
+            return response()->json($plats);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Aucun plat trouvé pour cette catégorie',
+                'plats' => []
+            ], 200);
+        }
     }
 }
