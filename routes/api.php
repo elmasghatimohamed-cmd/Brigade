@@ -6,6 +6,7 @@ use App\Http\Controllers\PlatController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\IngredientController;
+use App\Http\Controllers\RecommendationController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -46,4 +47,10 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/ingredients', [IngredientController::class, 'store']);
     Route::put('/ingredients/{id}', [IngredientController::class, 'update']);
     Route::delete('/ingredients/{id}', [IngredientController::class, 'destroy']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/recommendations/analyze/{plate_id}', [RecommendationController::class, 'analyze']);
+    Route::get('/recommendations', [RecommendationController::class, 'getHistory']);
+    Route::get('/recommendations/{plate_id}', [RecommendationController::class, 'getByPlate']);
 });
